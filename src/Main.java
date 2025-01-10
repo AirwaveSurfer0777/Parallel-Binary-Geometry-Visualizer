@@ -1,9 +1,11 @@
 import javax.swing.*;
 import java.awt.*;
-import java.util.function.BiConsumer;
-
+/** AUTHOR AIRWAVESURFER0777 **/
 public class Main extends JFrame {
     private static final long serialVersionUID = 4648172894076113183L;
+
+    // Define an integer for the binary value
+    private static final int binaryValue = 119; // Change this value as needed
 
     public Main() {
         initUI();
@@ -30,17 +32,21 @@ public class Main extends JFrame {
                 int panelWidth = getWidth();
                 int panelHeight = getHeight();
 
-                // Six lines of text
-                String[] texts = {
-                    "1 1 1 0 1 1 1",
-                    "0 0 0 1 0 0 0",
-                    "1 1 1 0 1 1 1",
-                    "0 0 0 1 0 0 0",
-                    "1 1 1 0 1 1 1",
-                    "0 0 0 1 0 0 0"
-                };
+                // Convert the binary value to binary string with spaces
+                String binaryString = Integer.toBinaryString(binaryValue);
+                String spacedBinary = String.join(" ", binaryString.split("")); // Add spaces between characters
 
-                // Calculate vertical spacing
+                // Create the lines based on the binary value
+                String[] texts = new String[6];
+                for (int i = 0; i < 6; i++) {
+                    if (i % 2 == 0) {
+                        texts[i] = spacedBinary; // Normal binary
+                    } else {
+                        texts[i] = new StringBuilder(spacedBinary).reverse().toString(); // Reversed binary
+                    }
+                }
+
+             // Calculate vertical spacing
                 int verticalSpacing = panelHeight / (texts.length + 1);
                 int[] textXPositions = new int[texts.length];
                 int[] textYPositions = new int[texts.length];
