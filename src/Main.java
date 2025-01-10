@@ -6,11 +6,13 @@ public class Main extends JFrame {
     private static final long serialVersionUID = 4648172894076113183L;
 
     // Define an integer for the binary value
-    private static final int BINARY_VALUE = 10; // Change this value as needed
+    private static final int BINARY_VALUE = 28; // Change this value as needed
 
     // Booleans to enable/disable connections
-    private static final boolean drawHorizontally = true; // Set to false to disable
+    private static final boolean drawHorizontally = false; // Set to false to disable
     private static final boolean drawDiagonally = true; // Set to false to disable
+    private static final boolean drawOnes = true; // Set to false to disable connections for 1s
+    private static final boolean drawZeros = true; // Set to false to disable connections for 0s
 
     public Main() {
         initUI();
@@ -26,7 +28,7 @@ public class Main extends JFrame {
                 super.paintComponent(g);
                 Graphics2D g2d = (Graphics2D) g;
                 g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                
+
                 // Set up the text properties
                 g.setColor(Color.WHITE);
                 g.setFont(new Font("Arial", Font.PLAIN, 16));
@@ -90,12 +92,16 @@ public class Main extends JFrame {
             private void drawHorizontalConnections(Graphics2D g2d, String text, int x, int y, int charWidth, int spaceWidth) {
                 String[] parts = text.split(" ");
                 for (int j = 0; j < parts.length - 1; j++) {
-                    if (parts[j].equals (parts[j + 1])) {
+                    if ( parts[j].equals(parts[j + 1])) {
                         // Start at the left edge of the first character
                         int startX = x + (j * (charWidth + spaceWidth));
                         // End at the right edge of the last character
                         int endX = x + ((j + 1) * (charWidth + spaceWidth) + charWidth);
-                        g2d.drawLine(startX, y - 5, endX, y - 5);
+                        if (parts[j].equals("1") && drawOnes) {
+                            g2d.drawLine(startX, y - 5, endX, y - 5);
+                        } else if (parts[j].equals("0") && drawZeros) {
+                            g2d.drawLine(startX, y - 5, endX, y - 5);
+                        }
                     }
                 }
             }
@@ -108,9 +114,15 @@ public class Main extends JFrame {
                     for (int k = 0; k < bottomParts.length; k++) {
                         // Only connect 0s to 0s and 1s to 1s
                         if (topParts[j].equals(bottomParts[k]) && (topParts[j].equals("0") || topParts[j].equals("1"))) {
-                            int startX = topX + (j * (charWidth + spaceWidth)) + charWidth / 2;
-                            int endX = bottomX + (k * (charWidth + spaceWidth)) + charWidth / 2;
-                            g2d.drawLine(startX, topY - 5, endX, bottomY - 5);
+                            if (topParts[j].equals("1") && drawOnes) {
+                                int startX = topX + (j * (charWidth + spaceWidth)) + charWidth / 2;
+                                int endX = bottomX + (k * (charWidth + spaceWidth)) + charWidth / 2;
+                                g2d.drawLine(startX, topY - 5, endX, bottomY - 5);
+                            } else if (topParts[j].equals("0") && drawZeros) {
+                                int startX = topX + (j * (charWidth + spaceWidth)) + charWidth / 2;
+                                int endX = bottomX + (k * (charWidth + spaceWidth)) + charWidth / 2;
+                                g2d.drawLine(startX, topY - 5, endX, bottomY - 5);
+                            }
                         }
                     }
                 }
