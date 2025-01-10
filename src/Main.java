@@ -6,11 +6,11 @@ public class Main extends JFrame {
     private static final long serialVersionUID = 4648172894076113183L;
 
     // Define an integer for the binary value
-    private static final int binaryValue = 119; // Change this value as needed
+    private static final int BINARY_VALUE = 10; // Change this value as needed
 
     // Booleans to enable/disable connections
-    private static final boolean drawHorizontalConnections = false; // Set to false to disable
-    private static final boolean drawDiagonalConnections = false; // Set to false to disable
+    private static final boolean drawHorizontally = true; // Set to false to disable
+    private static final boolean drawDiagonally = true; // Set to false to disable
 
     public Main() {
         initUI();
@@ -26,9 +26,7 @@ public class Main extends JFrame {
                 super.paintComponent(g);
                 Graphics2D g2d = (Graphics2D) g;
                 g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-                setBackground(new Color(50, 50, 50));
-
+                
                 // Set up the text properties
                 g.setColor(Color.WHITE);
                 g.setFont(new Font("Arial", Font.PLAIN, 16));
@@ -38,13 +36,14 @@ public class Main extends JFrame {
                 int panelHeight = getHeight();
 
                 // Convert the binary value to binary string with spaces
-                String binaryString = Integer.toBinaryString(binaryValue);
+                String binaryString = Integer.toBinaryString(BINARY_VALUE);
                 String spacedBinary = String.join(" ", binaryString.split("")); // Add spaces between characters
 
                 // Create the lines based on the binary value
                 String[] texts = new String[6];
                 String reversedBinary = new StringBuilder(spacedBinary).reverse().toString(); // Reverse the binary string
 
+                // Set the texts for each line
                 for (int i = 0; i < texts.length; i++) {
                     if (i % 2 == 0) {
                         texts[i] = spacedBinary; // Normal binary for 1st, 3rd, 5th lines
@@ -74,14 +73,14 @@ public class Main extends JFrame {
                 g2d.setStroke(new BasicStroke(1.0f));
 
                 // Draw horizontal connections if enabled
-                if (drawHorizontalConnections) {
+                if (drawHorizontally) {
                     for (int i = 0; i < texts.length; i++) {
                         drawHorizontalConnections(g2d, texts[i], textXPositions[i], textYPositions[i], charWidth, spaceWidth);
                     }
                 }
 
                 // Draw diagonal connections if enabled
-                if (drawDiagonalConnections) {
+                if (drawDiagonally) {
                     for (int i = 0; i < texts.length - 1; i++) {
                         drawDiagonalConnections(g2d, texts[i], texts[i + 1], textXPositions[i], textYPositions[i], textXPositions[i + 1], textYPositions[i + 1], charWidth, spaceWidth);
                     }
@@ -91,7 +90,7 @@ public class Main extends JFrame {
             private void drawHorizontalConnections(Graphics2D g2d, String text, int x, int y, int charWidth, int spaceWidth) {
                 String[] parts = text.split(" ");
                 for (int j = 0; j < parts.length - 1; j++) {
-                    if (parts[j].equals(parts[j + 1])) {
+                    if (parts[j].equals (parts[j + 1])) {
                         // Start at the left edge of the first character
                         int startX = x + (j * (charWidth + spaceWidth));
                         // End at the right edge of the last character
