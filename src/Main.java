@@ -1,11 +1,16 @@
 import javax.swing.*;
 import java.awt.*;
+
 /** AUTHOR AIRWAVESURFER0777 **/
 public class Main extends JFrame {
     private static final long serialVersionUID = 4648172894076113183L;
 
     // Define an integer for the binary value
     private static final int binaryValue = 119; // Change this value as needed
+
+    // Booleans to enable/disable connections
+    private static final boolean drawHorizontalConnections = false; // Set to false to disable
+    private static final boolean drawDiagonalConnections = false; // Set to false to disable
 
     public Main() {
         initUI();
@@ -38,15 +43,17 @@ public class Main extends JFrame {
 
                 // Create the lines based on the binary value
                 String[] texts = new String[6];
-                for (int i = 0; i < 6; i++) {
+                String reversedBinary = new StringBuilder(spacedBinary).reverse().toString(); // Reverse the binary string
+
+                for (int i = 0; i < texts.length; i++) {
                     if (i % 2 == 0) {
-                        texts[i] = spacedBinary; // Normal binary
+                        texts[i] = spacedBinary; // Normal binary for 1st, 3rd, 5th lines
                     } else {
-                        texts[i] = new StringBuilder(spacedBinary).reverse().toString(); // Reversed binary
+                        texts[i] = reversedBinary; // Reversed binary for 2nd, 4th, 6th lines
                     }
                 }
 
-             // Calculate vertical spacing
+                // Calculate vertical spacing
                 int verticalSpacing = panelHeight / (texts.length + 1);
                 int[] textXPositions = new int[texts.length];
                 int[] textYPositions = new int[texts.length];
@@ -66,14 +73,18 @@ public class Main extends JFrame {
                 g2d.setColor(Color.WHITE);
                 g2d.setStroke(new BasicStroke(1.0f));
 
-                // Draw horizontal connections
-                for (int i = 0; i < texts.length; i++) {
-                    drawHorizontalConnections(g2d, texts[i], textXPositions[i], textYPositions[i], charWidth, spaceWidth);
+                // Draw horizontal connections if enabled
+                if (drawHorizontalConnections) {
+                    for (int i = 0; i < texts.length; i++) {
+                        drawHorizontalConnections(g2d, texts[i], textXPositions[i], textYPositions[i], charWidth, spaceWidth);
+                    }
                 }
 
-                // Draw diagonal connections
-                for (int i = 0; i < texts.length - 1; i++) {
-                    drawDiagonalConnections(g2d, texts[i], texts[i + 1], textXPositions[i], textYPositions[i], textXPositions[i + 1], textYPositions[i + 1], charWidth, spaceWidth);
+                // Draw diagonal connections if enabled
+                if (drawDiagonalConnections) {
+                    for (int i = 0; i < texts.length - 1; i++) {
+                        drawDiagonalConnections(g2d, texts[i], texts[i + 1], textXPositions[i], textYPositions[i], textXPositions[i + 1], textYPositions[i + 1], charWidth, spaceWidth);
+                    }
                 }
             }
 
