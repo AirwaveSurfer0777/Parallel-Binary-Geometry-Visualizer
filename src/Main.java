@@ -2,11 +2,12 @@ import javax.swing.*;
 import java.awt.*;
 
 /** AUTHOR AIRWAVESURFER0777 **/
+/** The inspiration for this program, comes from the binary code 1110111, found written in the pages of the book Autobiography of a Yogi**/
 public class Main extends JFrame {
     private static final long serialVersionUID = 4648172894076113183L;
 
     // Define an integer for the binary value
-    private static final int BINARY_VALUE = 28; // Change this value as needed
+    private static final int BINARY_VALUE = 119; // Change this value as needed
 
     // Booleans to enable/disable connections
     private static final boolean drawHorizontally = false; // Set to false to disable
