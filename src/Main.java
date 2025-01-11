@@ -20,6 +20,28 @@ public class Main extends JFrame {
         setTitle("Parallel Binary Geometry Visualizer");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(600, 500);
+        
+        // Set an icon for the JFrame
+        setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/icon.png")));
+        
+        // Create a menu bar
+        JMenuBar menuBar = new JMenuBar();
+
+        // Create "About" menu
+        JMenu aboutMenu = new JMenu("About");
+        JMenuItem aboutItem = new JMenuItem("About");
+        aboutItem.addActionListener(e -> JOptionPane.showMessageDialog(this, 
+            "Parallel Binary Geometry Visualizer\n" +
+            "Author: AIRWAVESURFER0777\n" +
+            "The inspiration for this program comes from the binary code 1110111, " +
+            "found written in the pages of the book Autobiography of a Yogi.", 
+            "About", 
+            JOptionPane.INFORMATION_MESSAGE));
+        aboutMenu.add(aboutItem);
+        menuBar.add(aboutMenu);
+
+        // Set the menu bar
+        setJMenuBar(menuBar);
 
         JPanel panel = new JPanel() {
             private static final long serialVersionUID = 77091376395953152L;
