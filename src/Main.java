@@ -11,19 +11,25 @@ public class Main extends JFrame {
     private int binaryValue = 119; // Change this value as needed
 
     // Booleans to enable/disable connections
-    private static final boolean drawHorizontally = false; // Set to false to disable
-    private static final boolean drawDiagonally = true; // Set to false to disable
-    private static final boolean drawOnes = true; // Set to false to disable connections for 1s
-    private static final boolean drawZeros = true; // Set to false to disable connections for 0s
+    private boolean drawHorizontally = false; // Set to false to disable
+    private boolean drawDiagonally = true; // Set to false to disable
+    private boolean drawOnes = true; // Set to false to disable connections for 1s
+    private boolean drawZeros = true; // Set to false to disable connections for 0s
 
     private JTextField inputField;
     private JPanel panel;
+
+    // Labels to show the status of toggles
+    private JLabel horizontalStatus;
+    private JLabel diagonalStatus;
+    private JLabel onesStatus;
+    private JLabel zerosStatus;
 
     public Main() {
         initUI();
         setTitle("Parallel Binary Geometry Visualizer");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(600, 500);
+        setSize(600, 600); // Increased height to accommodate status labels
 
         // Set an icon for the JFrame
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/icon.png")));
@@ -38,12 +44,13 @@ public class Main extends JFrame {
                 "Parallel Binary Geometry Visualizer\n" +
                         "Author: AIRWAVESURFER0777\n" +
                         "The inspiration for this program comes from the binary code 1110111, " +
-                        "found written in the pages of the book Autobiography of a Yogi.",
+                        "found written in the pages of the book Autobiography of a Yogi.\n" +
+                        "Made for the people in India, by an American.",
                 "About",
                 JOptionPane.INFORMATION_MESSAGE));
         aboutMenu.add(aboutItem);
         menuBar.add(aboutMenu);
-
+        
         // Set the menu bar
         setJMenuBar(menuBar);
 
@@ -175,14 +182,69 @@ public class Main extends JFrame {
         inputPanel.setBackground(Color.BLACK);
         inputPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
 
+        // Create toggle buttons panel
+        JPanel togglePanel = new JPanel();
+        togglePanel.setLayout(new GridLayout(2, 4)); // Use GridLayout for horizontal arrangement
+
+        JButton toggleHorizontalButton = new JButton("Toggle Horizontal");
+        horizontalStatus = new JLabel("OFF");
+        horizontalStatus.setForeground(Color.RED);
+        toggleHorizontalButton.addActionListener(e -> {
+            drawHorizontally = !drawHorizontally;
+            horizontalStatus.setText(drawHorizontally ? "ON" : "OFF");
+            horizontalStatus.setForeground(drawHorizontally ? Color.GREEN : Color .RED);
+            panel.repaint();
+        });
+
+        JButton toggleDiagonalButton = new JButton("Toggle Diagonal");
+        diagonalStatus = new JLabel("ON");
+        diagonalStatus.setForeground(Color.GREEN);
+        toggleDiagonalButton.addActionListener(e -> {
+            drawDiagonally = !drawDiagonally;
+            diagonalStatus.setText(drawDiagonally ? "ON" : "OFF");
+            diagonalStatus.setForeground(drawDiagonally ? Color.GREEN : Color.RED);
+            panel.repaint();
+        });
+
+        JButton toggleOnesButton = new JButton("Toggle Ones");
+        onesStatus = new JLabel("ON");
+        onesStatus.setForeground(Color.GREEN);
+        toggleOnesButton.addActionListener(e -> {
+            drawOnes = !drawOnes;
+            onesStatus.setText(drawOnes ? "ON" : "OFF");
+            onesStatus.setForeground(drawOnes ? Color.GREEN : Color.RED);
+            panel.repaint();
+        });
+
+        JButton toggleZerosButton = new JButton("Toggle Zeros");
+        zerosStatus = new JLabel("ON");
+        zerosStatus.setForeground(Color.GREEN);
+        toggleZerosButton.addActionListener(e -> {
+            drawZeros = !drawZeros;
+            zerosStatus.setText(drawZeros ? "ON" : "OFF");
+            zerosStatus.setForeground(drawZeros ? Color.GREEN : Color.RED);
+            panel.repaint();
+        });
+
+        // Add buttons and labels to the toggle panel
+        togglePanel.add(toggleHorizontalButton);
+        togglePanel.add(horizontalStatus);
+        togglePanel.add(toggleDiagonalButton);
+        togglePanel.add(diagonalStatus);
+        togglePanel.add(toggleOnesButton);
+        togglePanel.add(onesStatus);
+        togglePanel.add(toggleZerosButton);
+        togglePanel.add(zerosStatus);
+        togglePanel.setBackground(Color.BLACK);
+
         // Add components to the frame
         add(inputPanel, BorderLayout.NORTH);
         add(panel, BorderLayout.CENTER);
+        add(togglePanel, BorderLayout.SOUTH);
         setLocationRelativeTo(null);
     }
 
-    private void initUI()
-    {
+    private void initUI() {
         try {
             JFrame.setDefaultLookAndFeelDecorated(true);
             JDialog.setDefaultLookAndFeelDecorated(true);
