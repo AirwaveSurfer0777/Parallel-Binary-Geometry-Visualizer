@@ -1,13 +1,14 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /** AUTHOR AIRWAVESURFER0777 **/
-/** The inspiration for this program, comes from the binary code 1110111, found written in the pages of the book Autobiography of a Yogi**/
 public class Main extends JFrame {
     private static final long serialVersionUID = 4648172894076113183L;
 
-    // Define an integer for the binary value
-    private static final int BINARY_VALUE = 119; // Change this value as needed
+    // Default binary value
+    private int binaryValue = 119; // Change this value as needed
 
     // Booleans to enable/disable connections
     private static final boolean drawHorizontally = false; // Set to false to disable
@@ -15,35 +16,39 @@ public class Main extends JFrame {
     private static final boolean drawOnes = true; // Set to false to disable connections for 1s
     private static final boolean drawZeros = true; // Set to false to disable connections for 0s
 
+    private JTextField inputField;
+    private JPanel panel;
+
     public Main() {
         initUI();
         setTitle("Parallel Binary Geometry Visualizer");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(600, 500);
-        
+
         // Set an icon for the JFrame
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/icon.png")));
-        
+
         // Create a menu bar
         JMenuBar menuBar = new JMenuBar();
 
         // Create "About" menu
         JMenu aboutMenu = new JMenu("About");
         JMenuItem aboutItem = new JMenuItem("About");
-        aboutItem.addActionListener(e -> JOptionPane.showMessageDialog(this, 
-            "Parallel Binary Geometry Visualizer\n" +
-            "Author: AIRWAVESURFER0777\n" +
-            "The inspiration for this program comes from the binary code 1110111, " +
-            "found written in the pages of the book Autobiography of a Yogi.", 
-            "About", 
-            JOptionPane.INFORMATION_MESSAGE));
+        aboutItem.addActionListener(e -> JOptionPane.showMessageDialog(this,
+                "Parallel Binary Geometry Visualizer\n" +
+                        "Author: AIRWAVESURFER0777\n" +
+                        "The inspiration for this program comes from the binary code 1110111, " +
+                        "found written in the pages of the book Autobiography of a Yogi.",
+                "About",
+                JOptionPane.INFORMATION_MESSAGE));
         aboutMenu.add(aboutItem);
         menuBar.add(aboutMenu);
 
         // Set the menu bar
         setJMenuBar(menuBar);
 
-        JPanel panel = new JPanel() {
+        // Create the main panel
+        panel = new JPanel() {
             private static final long serialVersionUID = 77091376395953152L;
 
             @Override
@@ -61,7 +66,7 @@ public class Main extends JFrame {
                 int panelHeight = getHeight();
 
                 // Convert the binary value to binary string with spaces
-                String binaryString = Integer.toBinaryString(BINARY_VALUE);
+                String binaryString = Integer.toBinaryString(binaryValue);
                 String spacedBinary = String.join(" ", binaryString.split("")); // Add spaces between characters
 
                 // Create the lines based on the binary value
@@ -115,10 +120,8 @@ public class Main extends JFrame {
             private void drawHorizontalConnections(Graphics2D g2d, String text, int x, int y, int charWidth, int spaceWidth) {
                 String[] parts = text.split(" ");
                 for (int j = 0; j < parts.length - 1; j++) {
-                    if ( parts[j].equals(parts[j + 1])) {
-                        // Start at the left edge of the first character
+                    if (parts[j].equals(parts[j + 1])) {
                         int startX = x + (j * (charWidth + spaceWidth));
-                        // End at the right edge of the last character
                         int endX = x + ((j + 1) * (charWidth + spaceWidth) + charWidth);
                         if (parts[j].equals("1") && drawOnes) {
                             g2d.drawLine(startX, y - 5, endX, y - 5);
@@ -135,7 +138,6 @@ public class Main extends JFrame {
 
                 for (int j = 0; j < topParts.length; j++) {
                     for (int k = 0; k < bottomParts.length; k++) {
-                        // Only connect 0s to 0s and 1s to 1s
                         if (topParts[j].equals(bottomParts[k]) && (topParts[j].equals("0") || topParts[j].equals("1"))) {
                             if (topParts[j].equals("1") && drawOnes) {
                                 int startX = topX + (j * (charWidth + spaceWidth)) + charWidth / 2;
@@ -152,11 +154,35 @@ public class Main extends JFrame {
             }
         };
 
-        add(panel);
+        // Create input panel
+        JPanel inputPanel = new JPanel();
+        inputField = new JTextField(10);
+        JButton selectButton = new JButton("Select Number");
+        selectButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    binaryValue = Integer.parseInt(inputField.getText());
+                    panel.repaint(); // Repaint the panel with the new binary value
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(Main.this, "Please enter a valid number.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+
+        inputPanel.add(selectButton);
+        inputPanel.add(inputField);
+        inputPanel.setBackground(Color.BLACK);
+        inputPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
+
+        // Add components to the frame
+        add(inputPanel, BorderLayout.NORTH);
+        add(panel, BorderLayout.CENTER);
         setLocationRelativeTo(null);
     }
 
-    private void initUI() {
+    private void initUI()
+    {
         try {
             JFrame.setDefaultLookAndFeelDecorated(true);
             JDialog.setDefaultLookAndFeelDecorated(true);
