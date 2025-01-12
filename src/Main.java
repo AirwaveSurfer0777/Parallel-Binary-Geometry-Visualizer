@@ -11,7 +11,7 @@ public class Main extends JFrame {
     private int binaryValue = 119; // Change this value as needed
 
     // Booleans to enable/disable connections
-    private boolean drawHorizontally = false; // Set to false to disable
+    private boolean drawHorizontally = true; // Set to false to disable
     private boolean drawDiagonally = true; // Set to false to disable
     private boolean drawOnes = true; // Set to false to disable connections for 1s
     private boolean drawZeros = true; // Set to false to disable connections for 0s
