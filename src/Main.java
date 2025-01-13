@@ -45,7 +45,7 @@ public class Main extends JFrame {
                         "Author: AIRWAVESURFER0777\n" +
                         "The inspiration for this program comes from the binary code 1110111, " +
                         "found written in the pages of the book Autobiography of a Yogi.\n" +
-                        "Made for the people in India, by an American.",
+                        "Made for the people of India, by an American.",
                 "About",
                 JOptionPane.INFORMATION_MESSAGE));
         aboutMenu.add(aboutItem);
