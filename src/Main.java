@@ -1,250 +1,156 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.text.DecimalFormat;
+import org.json.JSONObject;
 
-/** AUTHOR AIRWAVESURFER0777 **/
-public class Main extends JFrame {
+public class Main extends JFrame 
+{
     private static final long serialVersionUID = 4648172894076113183L;
-
-    // Default binary value
-    private int binaryValue = 119; // Change this value as needed
-
-    // Booleans to enable/disable connections
-    private boolean drawHorizontally = true; // Set to false to disable
-    private boolean drawDiagonally = true; // Set to false to disable
-    private boolean drawOnes = true; // Set to false to disable connections for 1s
-    private boolean drawZeros = true; // Set to false to disable connections for 0s
-
-    private JTextField inputField;
-    private JPanel panel;
-
-    // Labels to show the status of toggles
-    private JLabel horizontalStatus;
-    private JLabel diagonalStatus;
-    private JLabel onesStatus;
-    private JLabel zerosStatus;
-
-    public Main() {
+    private JComboBox<String> fromCurrency;
+    private JComboBox<String> toCurrency;
+    private JTextField amountField;
+    private JLabel resultLabel;
+    private JButton convertButton;
+    private final String API_KEY = "e7a11fdb17ba4ef12c3db39e"; // Get from exchangerate-api.com
+    private final DecimalFormat df = new DecimalFormat("0.00"); // Used for formatting currency values
+    public static final int HEIGHT = 300;
+    public static final int WIDTH = 270;
+    
+    public Main() 
+    {
         initUI();
-        setTitle("Parallel Binary Geometry Visualizer");
+        setupComponents();
+        setTitle("Currency Converter");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(600, 600); // Increased height to accommodate status labels
-
-        // Set an icon for the JFrame
+        setSize(HEIGHT, WIDTH);
         setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getClassLoader().getResource("images/icon.png")));
-
-        // Create a menu bar
-        JMenuBar menuBar = new JMenuBar();
-
-        // Create "About" menu
-        JMenu aboutMenu = new JMenu("About");
-        JMenuItem aboutItem = new JMenuItem("About");
-        aboutItem.addActionListener(e -> JOptionPane.showMessageDialog(this,
-                "Parallel Binary Geometry Visualizer\n" +
-                        "Author: AIRWAVESURFER0777\n" +
-                        "The inspiration for this program comes from the binary code 1110111, " +
-                        "found written in the pages of the book Autobiography of a Yogi.\n" +
-                        "Made for the people of India, by an American.",
-                "About",
-                JOptionPane.INFORMATION_MESSAGE));
-        aboutMenu.add(aboutItem);
-        menuBar.add(aboutMenu);
-        
-        // Set the menu bar
-        setJMenuBar(menuBar);
-
-        // Create the main panel
-        panel = new JPanel() {
-            private static final long serialVersionUID = 77091376395953152L;
-
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                Graphics2D g2d = (Graphics2D) g;
-                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-                // Set up the text properties
-                g.setColor(Color.WHITE);
-                g.setFont(new Font("Arial", Font.PLAIN, 16));
-
-                FontMetrics metrics = g.getFontMetrics();
-                int panelWidth = getWidth();
-                int panelHeight = getHeight();
-
-                // Convert the binary value to binary string with spaces
-                String binaryString = Integer.toBinaryString(binaryValue);
-                String spacedBinary = String.join(" ", binaryString.split("")); // Add spaces between characters
-
-                // Create the lines based on the binary value
-                String[] texts = new String[6];
-                String reversedBinary = new StringBuilder(spacedBinary).reverse().toString(); // Reverse the binary string
-
-                // Set the texts for each line
-                for (int i = 0; i < texts.length; i++) {
-                    if (i % 2 == 0) {
-                        texts[i] = spacedBinary; // Normal binary for 1st, 3rd, 5th lines
-                    } else {
-                        texts[i] = reversedBinary; // Reversed binary for 2nd, 4th, 6th lines
-                    }
-                }
-
-                // Calculate vertical spacing
-                int verticalSpacing = panelHeight / (texts.length + 1);
-                int[] textXPositions = new int[texts.length];
-                int[] textYPositions = new int[texts.length];
-
-                // Calculate text positions
-                for (int i = 0; i < texts.length; i++) {
-                    int textWidth = metrics.stringWidth(texts[i]);
-                    textXPositions[i] = (panelWidth - textWidth) / 2;
-                    textYPositions[i] = verticalSpacing * (i + 1);
-                    g.drawString(texts[i], textXPositions[i], textYPositions[i]);
-                }
-
-                // Calculate character and space widths
-                int charWidth = metrics.charWidth('1');
-                int spaceWidth = metrics.charWidth(' ');
-
-                g2d.setColor(Color.WHITE);
-                g2d.setStroke(new BasicStroke(1.0f));
-
-                // Draw horizontal connections if enabled
-                if (drawHorizontally) {
-                    for (int i = 0; i < texts.length; i++) {
-                        drawHorizontalConnections(g2d, texts[i], textXPositions[i], textYPositions[i], charWidth, spaceWidth);
-                    }
-                }
-
-                // Draw diagonal connections if enabled
-                if (drawDiagonally) {
-                    for (int i = 0; i < texts.length - 1; i++) {
-                        drawDiagonalConnections(g2d, texts[i], texts[i + 1], textXPositions[i], textYPositions[i], textXPositions[i + 1], textYPositions[i + 1], charWidth, spaceWidth);
-                    }
-                }
-            }
-
-            private void drawHorizontalConnections(Graphics2D g2d, String text, int x, int y, int charWidth, int spaceWidth) {
-                String[] parts = text.split(" ");
-                for (int j = 0; j < parts.length - 1; j++) {
-                    if (parts[j].equals(parts[j + 1])) {
-                        int startX = x + (j * (charWidth + spaceWidth));
-                        int endX = x + ((j + 1) * (charWidth + spaceWidth) + charWidth);
-                        if (parts[j].equals("1") && drawOnes) {
-                            g2d.drawLine(startX, y - 5, endX, y - 5);
-                        } else if (parts[j].equals("0") && drawZeros) {
-                            g2d.drawLine(startX, y - 5, endX, y - 5);
-                        }
-                    }
-                }
-            }
-
-            private void drawDiagonalConnections(Graphics2D g2d, String topText, String bottomText, int topX, int topY, int bottomX, int bottomY, int charWidth, int spaceWidth) {
-                String[] topParts = topText.split(" ");
-                String[] bottomParts = bottomText.split(" ");
-
-                for (int j = 0; j < topParts.length; j++) {
-                    for (int k = 0; k < bottomParts.length; k++) {
-                        if (topParts[j].equals(bottomParts[k]) && (topParts[j].equals("0") || topParts[j].equals("1"))) {
-                            if (topParts[j].equals("1") && drawOnes) {
-                                int startX = topX + (j * (charWidth + spaceWidth)) + charWidth / 2;
-                                int endX = bottomX + (k * (charWidth + spaceWidth)) + charWidth / 2;
-                                g2d.drawLine(startX, topY - 5, endX, bottomY - 5);
-                            } else if (topParts[j].equals("0") && drawZeros) {
-                                int startX = topX + (j * (charWidth + spaceWidth)) + charWidth / 2;
-                                int endX = bottomX + (k * (charWidth + spaceWidth)) + charWidth / 2;
-                                g2d.drawLine(startX, topY - 5, endX, bottomY - 5);
-                            }
-                        }
-                    }
-                }
-            }
-        };
-
-        // Create input panel
-        JPanel inputPanel = new JPanel();
-        inputField = new JTextField(10);
-        JButton selectButton = new JButton("Select Number");
-        selectButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    binaryValue = Integer.parseInt(inputField.getText());
-                    panel.repaint(); // Repaint the panel with the new binary value
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(Main.this, "Please enter a valid number.", "Error", JOptionPane.ERROR_MESSAGE);
-                }
-            }
-        });
-
-        inputPanel.add(selectButton);
-        inputPanel.add(inputField);
-        inputPanel.setBackground(Color.BLACK);
-        inputPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
-
-        // Create toggle buttons panel
-        JPanel togglePanel = new JPanel();
-        togglePanel.setLayout(new GridLayout(2, 4)); // Use GridLayout for horizontal arrangement
-
-        JButton toggleHorizontalButton = new JButton("Toggle Horizontal");
-        horizontalStatus = new JLabel("ON");
-        horizontalStatus.setForeground(Color.GREEN);
-        toggleHorizontalButton.addActionListener(e -> {
-            drawHorizontally = !drawHorizontally;
-            horizontalStatus.setText(drawHorizontally ? "ON" : "OFF");
-            horizontalStatus.setForeground(drawHorizontally ? Color.GREEN : Color .RED);
-            panel.repaint();
-        });
-
-        JButton toggleDiagonalButton = new JButton("Toggle Diagonal");
-        diagonalStatus = new JLabel("ON");
-        diagonalStatus.setForeground(Color.GREEN);
-        toggleDiagonalButton.addActionListener(e -> {
-            drawDiagonally = !drawDiagonally;
-            diagonalStatus.setText(drawDiagonally ? "ON" : "OFF");
-            diagonalStatus.setForeground(drawDiagonally ? Color.GREEN : Color.RED);
-            panel.repaint();
-        });
-
-        JButton toggleOnesButton = new JButton("Toggle Ones");
-        onesStatus = new JLabel("ON");
-        onesStatus.setForeground(Color.GREEN);
-        toggleOnesButton.addActionListener(e -> {
-            drawOnes = !drawOnes;
-            onesStatus.setText(drawOnes ? "ON" : "OFF");
-            onesStatus.setForeground(drawOnes ? Color.GREEN : Color.RED);
-            panel.repaint();
-        });
-
-        JButton toggleZerosButton = new JButton("Toggle Zeros");
-        zerosStatus = new JLabel("ON");
-        zerosStatus.setForeground(Color.GREEN);
-        toggleZerosButton.addActionListener(e -> {
-            drawZeros = !drawZeros;
-            zerosStatus.setText(drawZeros ? "ON" : "OFF");
-            zerosStatus.setForeground(drawZeros ? Color.GREEN : Color.RED);
-            panel.repaint();
-        });
-
-        // Add buttons and labels to the toggle panel
-        togglePanel.add(toggleHorizontalButton);
-        togglePanel.add(horizontalStatus);
-        togglePanel.add(toggleDiagonalButton);
-        togglePanel.add(diagonalStatus);
-        togglePanel.add(toggleOnesButton);
-        togglePanel.add(onesStatus);
-        togglePanel.add(toggleZerosButton);
-        togglePanel.add(zerosStatus);
-        togglePanel.setBackground(Color.BLACK);
-
-        // Add components to the frame
-        add(inputPanel, BorderLayout.NORTH);
-        add(panel, BorderLayout.CENTER);
-        add(togglePanel, BorderLayout.SOUTH);
-        setLocationRelativeTo(null);
     }
 
-    private void initUI() {
+    private void setupComponents() 
+    {
+        // Main panel with GridBagLayout for better control
+        JPanel mainPanel = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.insets = new Insets(5, 5, 5, 5);
+
+        // Currency arrays
+        String[] currencies = {"USD", "EUR", "GBP", "JPY", "AUD", "CAD", "CHF", "CNY", "INR"};
+        
+        // Initialize components
+        fromCurrency = new JComboBox<>(currencies);
+        toCurrency = new JComboBox<>(currencies);
+        amountField = new JTextField(10);
+        convertButton = new JButton("Convert");
+        resultLabel = new JLabel("Enter amount and press Convert");
+        
+        // Add components to panel
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        mainPanel.add(new JLabel("Amount:"), gbc);
+        
+        gbc.gridx = 1;
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        mainPanel.add(amountField, gbc);
+        
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        mainPanel.add(new JLabel("From:"), gbc);
+        
+        gbc.gridx = 1;
+        mainPanel.add(fromCurrency, gbc);
+        
+        gbc.gridx = 0;
+        gbc.gridy = 2;
+        mainPanel.add(new JLabel("To:"), gbc);
+        
+        gbc.gridx = 1;
+        mainPanel.add(toCurrency, gbc);
+        
+        gbc.gridx = 0;
+        gbc.gridy = 3;
+        gbc.gridwidth = 2;
+        mainPanel.add(convertButton, gbc);
+        
+        gbc.gridy = 4;
+        mainPanel.add(resultLabel, gbc);
+        
+        // Add main panel to frame
+        add(mainPanel);
+        
+        // Add action listener to convert button
+        convertButton.addActionListener(e -> performConversion());
+    }
+    
+    private void performConversion()
+    {
+        try {
+            double amount = Double.parseDouble(amountField.getText());
+            String from = fromCurrency.getSelectedItem().toString();
+            String to = toCurrency.getSelectedItem().toString();
+            
+            // Make API call in background thread
+            SwingWorker<Double, Void> worker = new SwingWorker<>() 
+            {
+                @Override
+                protected Double doInBackground() throws Exception
+                {
+                    String urlStr = String.format(
+                        "https://v6.exchangerate-api.com/v6/%s/pair/%s/%s/%f",
+                        API_KEY, from, to, amount
+                    );
+                    
+                    URL url = new URL(urlStr);
+                    HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                    conn.setRequestMethod("GET");
+                    
+                    BufferedReader reader = new BufferedReader(
+                        new InputStreamReader(conn.getInputStream())
+                    );
+                    StringBuilder response = new StringBuilder();
+                    String line;
+                    
+                    while ((line = reader.readLine()) != null)
+                    {
+                        response.append(line);
+                    }
+                    reader.close();
+                    
+                    JSONObject json = new JSONObject(response.toString());
+                    return json.getDouble("conversion_result");
+                }
+                
+                @Override
+                protected void done() 
+                {
+                    try {
+                        double result = get();
+                        resultLabel.setText(String.format(
+                            "%s %s = %s %s",
+                            df.format(amount),
+                            from,
+                            df.format(result),
+                            to
+                        ));
+                    } catch (Exception ex) {
+                        resultLabel.setText("Error: " + ex.getMessage());
+                    }
+                }
+            };
+            
+            worker.execute();
+            resultLabel.setText("Converting...");
+            
+        } catch (NumberFormatException ex) {
+            resultLabel.setText("Please enter a valid number");
+        }
+    }
+
+    private void initUI()
+    {
         try {
             JFrame.setDefaultLookAndFeelDecorated(true);
             JDialog.setDefaultLookAndFeelDecorated(true);
@@ -263,8 +169,10 @@ public class Main extends JFrame {
         }
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
+    public static void main(String[] args)
+    {
+        SwingUtilities.invokeLater(() -> 
+        {
             Main gui = new Main();
             gui.setVisible(true);
         });
