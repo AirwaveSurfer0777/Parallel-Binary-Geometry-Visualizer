@@ -187,8 +187,8 @@ public class Main extends JFrame {
         togglePanel.setLayout(new GridLayout(2, 4)); // Use GridLayout for horizontal arrangement
 
         JButton toggleHorizontalButton = new JButton("Toggle Horizontal");
-        horizontalStatus = new JLabel("OFF");
-        horizontalStatus.setForeground(Color.RED);
+        horizontalStatus = new JLabel("ON");
+        horizontalStatus.setForeground(Color.GREEN);
         toggleHorizontalButton.addActionListener(e -> {
             drawHorizontally = !drawHorizontally;
             horizontalStatus.setText(drawHorizontally ? "ON" : "OFF");
